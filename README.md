@@ -1,11 +1,16 @@
-# Socat Docker image for Docksal #
+# docker.sock proxy #
 
-This is a socat image which proxies tcp://socat:2375 to /var/run/docker.sock
+Exposes `/var/run/docker.sock` on `tcp://docker-sock-proxy:2375`
 
 ### Usage ###
 
-* Build: `fin docker build -t docksal-socat:latest .`
-* Run: `fin docker run -v /var/run/docker.sock:/var/run/docker.sock -d --restart=always --name docksal-socat  docksal-socat`
-* Option to allow remote petitions to the host (without TLS):
-  Run: `docker run --privileged -v /var/run/docker.sock:/var/run/docker.sock -p 2375:2375 -d --restart=always --name docksal-socat docksal-socat`
+```
+docker run -v /var/run/docker.sock:/var/run/docker.sock -d --restart=always --name docker-sock-proxy docksal/socat
+```
 
+Option to allow remote connections to the host (without TLS) - **USE AT YOUR OWN RISK**
+
+```
+docker run -v /var/run/docker.sock:/var/run/docker.sock -d --restart=always --privileged -p 2375:2375 --name docker-sock-proxy docksal/socat
+```
+This will allow external **unsecured** connections to the Docker daemon on the host on port `2375`.
